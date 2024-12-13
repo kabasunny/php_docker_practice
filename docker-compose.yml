@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: yourdatabase
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  php:
+    image: php:7.4-apache
+    volumes:
+      - ./html:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: yourpassword
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
